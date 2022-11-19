@@ -1,0 +1,9 @@
+r = getnameinfo(resp->ai_addr, resp->ai_addrlen, host, NI_MAXHOST, service, NI_MAXSERV, NI_NUMERICHOST);
+
+printf("%s.%s\n\tfam: %d -- socktype: %d -- pro: %d -- addrlen: %d -- canonname: %s\n",
+    host, service, 
+    resp->ai_family, resp->ai_socktype, 
+    resp->ai_protocol, resp->addrlen, 
+    resp->canonname);
+
+resp = resp->ai_next;

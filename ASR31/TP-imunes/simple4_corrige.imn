@@ -1,0 +1,491 @@
+node n0 {
+    type host
+    network-config {
+	hostname GW1
+	!
+	interface eth1
+	 ipv6 address fc00:1::10/64
+	 mac address 42:00:aa:00:00:03
+	 ip address 172.16.2.253/24
+	!
+	interface eth0
+	 ipv6 address fc00::10/64
+	 mac address 42:00:aa:00:00:01
+	 ip address 172.16.1.253/24
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	!
+	!
+    }
+    canvas c0
+    iconcoords {264 216}
+    labelcoords {285 175}
+    interface-peer {eth1 n7}
+    interface-peer {eth0 n6}
+    custom-configs {
+        custom-config-id default {
+            custom-command /bin/sh
+            config {
+                ip addr add 127.0.0.1/8 dev lo0
+                ip addr add 172.16.2.253/24 dev eth1
+                ip addr add 172.16.1.253/24 dev eth0
+                ip -6 addr add ::1/128 dev lo0
+                ip -6 addr add fc00:1::10/64 dev eth1
+                ip -6 addr add fc00::10/64 dev eth0
+                
+                echo 1> /proc/sys/net/ipv4/ip_forward
+                
+                ip route add 0.0.0.0/0 via 172.16.2.254
+                iptables -t filter -A FORWARD -d 172.16.3.0/24 -j DROP 
+                iptables -t nat -A POSTROUTING -o eth1 -j SNAT --to-source 172.16.2.253
+                
+                rpcbind
+                inetd
+                
+            }
+        }
+    }
+    custom-enabled true
+    custom-selected default
+}
+
+node n1 {
+    type host
+    network-config {
+	hostname GW2
+	!
+	interface eth2
+	 ipv6 address fc00:8::10/64
+	 mac address 42:00:aa:00:00:00
+	 ip address 45.45.45.254/21
+	!
+	interface eth1
+	 ipv6 address fc00:2::10/64
+	 mac address 42:00:aa:00:00:06
+	 ip address 172.16.3.254/24
+	!
+	interface eth0
+	 ipv6 address fc00:1::11/64
+	 mac address 42:00:aa:00:00:04
+	 ip address 172.16.2.254/24
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	!
+	!
+	!
+    }
+    canvas c0
+    iconcoords {552 336}
+    labelcoords {511 354}
+    interface-peer {eth0 n7}
+    interface-peer {eth1 n8}
+    custom-configs {
+        custom-config-id default {
+            custom-command /bin/sh
+            config {
+                ip addr add 127.0.0.1/8 dev lo0
+                ip addr add 172.16.2.254/24 dev eth0
+                ip addr add 172.16.3.254/24 dev eth1
+                ip addr add 45.45.45.254/21 dev eth2
+                ip -6 addr add ::1/128 dev lo0
+                ip -6 addr add fc00:1::11/64 dev eth0
+                ip -6 addr add fc00:2::10/64 dev eth1
+                ip -6 addr add fc00:8::10/64 dev eth2
+                
+                echo 1 > /proc/sys/net/ipv4/ip_forward
+                
+                ip route add 0.0.0.0/0 via 45.45.45.253
+                iptables -t filter -A FORWARD -d 172.16.1.1 -j DROP
+                iptables -t nat -A POSTROUTING -d 172.16.3.0/24 -j SNAT --to-source 172.16.3.254
+                iptables -t nat -A POSTROUTING -o eth2 -j SNAT --to-source 45.45.45.254
+                
+                rpcbind
+                inetd
+                
+            }
+        }
+    }
+    custom-enabled true
+    interface-peer {eth2 n13}
+    custom-selected default
+}
+
+node n4 {
+    type pc
+    network-config {
+	hostname pc2
+	!
+	interface eth0
+	 ipv6 address fc00:1::20/64
+	 mac address 42:00:aa:00:00:05
+	 ip address 172.16.2.2/24
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	ip route 0.0.0.0/0 172.16.2.254
+	!
+    }
+    canvas c0
+    iconcoords {360 360}
+    labelcoords {360 391}
+    interface-peer {eth0 n7}
+}
+
+node n5 {
+    type pc
+    network-config {
+	hostname pc3
+	!
+	interface eth0
+	 ipv6 address fc00:2::20/64
+	 mac address 42:00:aa:00:00:07
+	 ip address 172.16.3.3/24
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+    }
+    canvas c0
+    iconcoords {864 216}
+    labelcoords {864 247}
+    interface-peer {eth0 n8}
+}
+
+node n6 {
+    type lanswitch
+    network-config {
+	hostname switch1
+	!
+	interface e2
+	!
+	interface e1
+	!
+	!
+    }
+    canvas c0
+    iconcoords {192 96}
+    labelcoords {193 64}
+    interface-peer {e1 n0}
+    interface-peer {e2 n3}
+}
+
+node n7 {
+    type lanswitch
+    network-config {
+	hostname switch2
+	!
+    }
+    canvas c0
+    iconcoords {456 192}
+    labelcoords {453 164}
+    interface-peer {e0 n0}
+    interface-peer {e1 n1}
+    interface-peer {e2 n4}
+}
+
+node n8 {
+    type lanswitch
+    network-config {
+	hostname switch3
+	!
+    }
+    canvas c0
+    iconcoords {696 72}
+    labelcoords {691 45}
+    interface-peer {e0 n1}
+    interface-peer {e1 n5}
+}
+
+node n9 {
+    type router
+    model quagga
+    network-config {
+	hostname router1
+	!
+	interface eth1
+	 ipv6 address fc00:5::2/64
+	 mac address 42:00:aa:00:00:0b
+	 ip address 62.62.62.253/19
+	!
+	interface eth0
+	 ipv6 address fc00:8::1/64
+	 mac address 42:00:aa:00:00:0e
+	 ip address 45.45.45.253/21
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	router rip
+	 redistribute static
+	 redistribute connected
+	 redistribute ospf
+	 network 0.0.0.0/0
+	!
+	router ripng
+	 redistribute static
+	 redistribute connected
+	 redistribute ospf6
+	 network ::/0
+	!
+    }
+    canvas c0
+    iconcoords {648 576}
+    labelcoords {703 577}
+    interface-peer {eth1 n11}
+    interface-peer {eth0 n13}
+}
+
+node n3 {
+    type pc
+    network-config {
+	hostname pc1
+	!
+	interface eth0
+	 ipv6 address fc00::21/64
+	 mac address 42:00:aa:00:00:02
+	 ip address 172.16.1.1/24
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	!
+	ip route 0.0.0.0/0 172.16.1.253
+	!
+    }
+    canvas c0
+    iconcoords {48 240}
+    labelcoords {48 271}
+    interface-peer {eth0 n6}
+}
+
+node n10 {
+    type pc
+    network-config {
+	hostname pc
+	!
+	interface eth0
+	 ipv6 address fc00:6::20/64
+	 mac address 42:00:aa:00:00:0d
+	 ip address 37.37.37.1/22
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	ip route 0.0.0.0/0 37.37.37.254
+	!
+	!
+    }
+    canvas c0
+    iconcoords {72 504}
+    labelcoords {72 535}
+    interface-peer {eth0 n11}
+}
+
+node n11 {
+    type router
+    model quagga
+    network-config {
+	hostname router2
+	!
+	interface eth0
+	 ipv6 address fc00:5::1/64
+	 mac address 42:00:aa:00:00:0a
+	 ip address 62.62.62.254/19
+	!
+	interface eth1
+	 ipv6 address fc00:6::1/64
+	 mac address 42:00:aa:00:00:0c
+	 ip address 37.37.37.254/22
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	router rip
+	 redistribute static
+	 redistribute connected
+	 redistribute ospf
+	 network 0.0.0.0/0
+	!
+	router ripng
+	 redistribute static
+	 redistribute connected
+	 redistribute ospf6
+	 network ::/0
+	!
+    }
+    canvas c0
+    iconcoords {360 504}
+    labelcoords {343 475}
+    interface-peer {eth0 n9}
+    interface-peer {eth1 n10}
+}
+
+node n2 {
+    type host
+    network-config {
+	hostname host2
+	!
+	interface eth0
+	 ipv6 address fc00:8::12/64
+	 mac address 42:00:aa:00:00:09
+	 ip address 45.45.45.2/21
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	ip route 0.0.0.0/0 45.45.45.253
+	!
+	!
+    }
+    canvas c0
+    iconcoords {816 360}
+    labelcoords {840 324}
+    interface-peer {eth0 n13}
+}
+
+node n12 {
+    type host
+    network-config {
+	hostname host1
+	!
+	interface eth0
+	 ipv6 address fc00:8::11/64
+	 mac address 42:00:aa:00:00:08
+	 ip address 45.45.45.1/21
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	ip route 0.0.0.0/0 45.45.45.253
+	!
+	!
+    }
+    canvas c0
+    iconcoords {768 240}
+    labelcoords {729 208}
+    interface-peer {eth0 n13}
+}
+
+node n13 {
+    type lanswitch
+    network-config {
+	hostname switch4
+	!
+    }
+    canvas c0
+    iconcoords {672 480}
+    labelcoords {715 494}
+    interface-peer {e0 n1}
+    interface-peer {e1 n12}
+    interface-peer {e2 n2}
+    interface-peer {e3 n9}
+}
+
+link l3 {
+    nodes {n0 n7}
+    bandwidth 0
+}
+
+link l4 {
+    nodes {n1 n7}
+    bandwidth 0
+}
+
+link l5 {
+    nodes {n4 n7}
+    bandwidth 0
+}
+
+link l6 {
+    nodes {n1 n8}
+    bandwidth 0
+}
+
+link l7 {
+    nodes {n5 n8}
+    bandwidth 0
+}
+
+link l1 {
+    nodes {n0 n6}
+    bandwidth 0
+}
+
+link l2 {
+    nodes {n3 n6}
+    bandwidth 0
+}
+
+link l9 {
+    nodes {n11 n9}
+    bandwidth 0
+}
+
+link l10 {
+    nodes {n10 n11}
+    bandwidth 0
+}
+
+link l0 {
+    nodes {n1 n13}
+    bandwidth 0
+}
+
+link l8 {
+    nodes {n12 n13}
+    bandwidth 0
+}
+
+link l11 {
+    nodes {n2 n13}
+    bandwidth 0
+}
+
+link l12 {
+    nodes {n13 n9}
+    bandwidth 0
+}
+
+canvas c0 {
+    name {Canvas0}
+}
+
+option show {
+    interface_names yes
+    ip_addresses yes
+    ipv6_addresses no
+    node_labels yes
+    link_labels no
+    background_images no
+    annotations yes
+    hostsAutoAssign no
+    grid yes
+    iconSize normal
+    zoom 1.0
+}
+

@@ -1,0 +1,12 @@
+ps -l --forest -A 
+
+kill(pid, SIGUSR1); // sys/types.h signal.h
+
+execl("path/to/executable", "executable", arg1, NULL); // unistd.h
+execv("path", argv); // unistd.h
+
+fork() // sys/types.h unistd.h
+
+int wait(int* status) // returns pid, puts exit code in status. use WEXITSTATUS(status) to get usable status
+int waitpid(int pid, int* status, int options);
+

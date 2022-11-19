@@ -1,0 +1,17 @@
+Index of /sitebp/asr/asr31
+[ICO]	Name	Last modified	Size	Description
+[DIR]	Parent Directory 	 	- 	 
+[ ]	net-structures.pdf 	03-Dec-2018 09:23 	71K	 
+[ ]	tp1.s3.pdf 	24-Sep-2018 10:26 	36K	 
+[ ]	tp2.s3.pdf 	24-Sep-2018 10:26 	34K	 
+[ ]	tp3.s3.pdf 	17-Sep-2018 11:48 	32K	 
+[ ]	tp4.s3.pdf 	17-Sep-2018 11:22 	36K	 
+[ ]	tp5.s3.pdf 	24-Sep-2018 10:44 	21K	 
+[ ]	tp6.s3.pdf 	03-Dec-2018 16:41 	25K	 
+[ ]	tp7.s3.pdf 	17-Dec-2018 16:48 	94K	 
+[ ]	tp8.s3.pdf 	17-Dec-2018 16:48 	121K	 
+[ ]	tp9.s3.pdf 	01-Feb-2019 10:50 	34K	 
+[ ]	tp10.s3.pdf 	07-Feb-2019 18:18 	32K	 
+[ ]	tp11.s3.pdf 	22-Mar-2019 11:01 	52K	 
+[ ]	tp12.s3.pdf 	29-Mar-2019 10:10 	37K	 
+Apache/2.2.23 (Unix) mod_ssl/2.2.20 OpenSSL/1.0.0e DAV/2 SVN/1.7.6 PHP/5.4.8 Server at www.iut-fbleau.fr Port 80

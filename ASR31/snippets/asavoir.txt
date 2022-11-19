@@ -1,0 +1,5 @@
+fork
+exec
+pipe (read/write)
+sighandler
+
