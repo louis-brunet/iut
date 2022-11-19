@@ -1,0 +1,50 @@
+{
+  "gift": {
+    "Name" : "Gift",
+    "Desc" : "Gives a random pickupable when killing an enemy.",
+    "Width": 48,
+    "Height": 48,
+    "Size": 0.2608695652,
+    "ActionClass" : "GiftItemAction",
+    "Image" : "items/gift.png",
+    "AutoPickup" : false,
+    "Currency" : "HEARTS",
+    "Price" : 1
+  },
+  "test_item": {
+    "Name" : "Test Item",
+    "Desc" : "This is just a test item",
+    "Width": 48,
+    "Height": 48,
+    "Size": 1,
+    "ActionClass" : "TestItemAction",
+    "Image" : "gui/shieldIcon.png",
+    "AutoPickup" : true,
+    "Currency" : "GOLD",
+    "Price" : 80
+  },
+  "glue": {
+    "Name" : "Bottle of glue",
+    "Desc" : "Apply to projectiles to slow down enemies.",
+    "Width": 48,
+    "Height": 48,
+    "Size": 0.462,
+    "ActionClass" : "GlueItemAction",
+    "Image" : "items/glue.png",
+    "AutoPickup" : true,
+    "Currency" : "GOLD",
+    "Price" : 55
+  },
+  "fast_projectiles": {
+    "Name" : "Fast projectiles",
+    "Desc" : "All fired projectiles get a speed boost.",
+    "Width": 48,
+    "Height": 48,
+    "Size": 0.375,
+    "ActionClass" : "FastProjectilesItemAction",
+    "Image" : "items/fast_projectiles.png",
+    "AutoPickup" : true,
+    "Currency" : "GOLD",
+    "Price" : 70
+  }
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="" color="#a0a0a4"/>
+ <objecttype name="Chest" color="#54007f">
+  <property name="chestTypes" type="string"/>
+  <property name="images" type="string"/>
+ </objecttype>
+ <objecttype name="Connection" color="#0000ff">
+  <property name="connectionPosition" type="string"/>
+ </objecttype>
+ <objecttype name="DamageCollisions" color="#005500">
+  <property name="amountOfDamages" type="float" default="0"/>
+ </objecttype>
+ <objecttype name="Door" color="#ff5500">
+  <property name="doorTypes" type="string"/>
+  <property name="images" type="string"/>
+ </objecttype>
+ <objecttype name="EnemySpawn" color="#ffff00">
+  <property name="enemies" type="string"/>
+  <property name="flying" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="JumpThroughCollision" color="#00ff00"/>
+ <objecttype name="Light" color="#ffffff">
+  <property name="color" type="color" default="#00000000"/>
+  <property name="radius" type="float" default="0"/>
+ </objecttype>
+ <objecttype name="Crate" color="#6b4129">
+  <property name="ObjectTypes" type="string"/>
+  <property name="images" type="string"/>
+  <property name="objectTypes" type="string"/>
+ </objecttype>
+ <objecttype name="PlayerSpawn" color="#00ffff"/>
+ <objecttype name="Shop" color="#1f006d">
+  <property name="shopType" type="string"/>
+ </objecttype>
+ <objecttype name="ShopItem" color="#3000c2">
+  <property name="productType" type="string"/>
+ </objecttype>
+ <objecttype name="SolidCollision" color="#ff0000"/>
+</objecttypes>

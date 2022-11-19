@@ -1,0 +1,60 @@
+{
+  "skeleton_archer": {
+    "Name" : "Test Enemy",
+    "Desc" : "This is a test ",
+    "BaseHealth" : 5,
+    "MaxHealth" : 5,
+    "BaseDamages": 1,
+    "MaxSpeed" : 150,
+    "JumpSpeed" : 1,
+    "FocusRange" : 13,
+    "Width" : 48,
+    "Height" : 84,
+    "Size" : 0.375,
+    "DoesFly" : false,
+    "IdleImage" : "testplayer/player/idle.png",
+    "IdleImageWidth" : 1,
+    "IdleImageHeight" : 1,
+    "MoveImage" : "testplayer/player/run_spritesheet.png",
+    "MoveImageWidth" : 4,
+    "MoveImageHeight" : 1,
+    "JumpImage" : "testplayer/player/jump_spritesheet.png",
+    "JumpImageWidth" : 3,
+    "JumpImageHeight" : 1,
+    "Weapons" : {
+      "simple_bow": 1,
+      "simple_gun": 0
+    },
+    "Type" : "SkeletonArcher",
+    "Color": [255,0,255,255]
+  },
+  "test_enemy": {
+    "Name" : "Test Enemy",
+    "Desc" : "This is a test ",
+    "BaseHealth" : 10,
+    "MaxHealth" : 30,
+    "BaseDamages": 1,
+    "MaxSpeed" : 200,
+    "JumpSpeed" : 1,
+    "FocusRange" : 6,
+    "Width" : 48,
+    "Height" : 84,
+    "Size" : 0.375,
+    "DoesFly" : false,
+    "IdleImage" : "testplayer/player/idle.png",
+    "IdleImageWidth" : 1,
+    "IdleImageHeight" : 1,
+    "MoveImage" : "testplayer/player/run_spritesheet.png",
+    "MoveImageWidth" : 4,
+    "MoveImageHeight" : 1,
+    "JumpImage" : "testplayer/player/jump_spritesheet.png",
+    "JumpImageWidth" : 3,
+    "JumpImageHeight" : 1,
+    "Weapons" : {
+      "simple_bow": 1,
+      "simple_gun": 1
+    },
+    "Type" : "Test",
+    "Color": [255,0,0,255]
+  }
+}

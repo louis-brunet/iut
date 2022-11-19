@@ -1,0 +1,50 @@
+(cf. documents/ZtH.mdj)
+
+# Un donjon
+C'est un ensemble de pièces parcourables par le joueur. Le contenu de chaque pièce est prédéfini. La disposition des pièces est générée pendant la création du donjon. Différents donjons peuvent contenir des ensembles de pièces différents. 
+Les pièces sont reliées par des couloirs. (?? ou pas)
+
+
+
+# Les pieces
+Une pièce correspond à un tilemap, avec une disposition prédéfinie. 
+il y a différents types de pièces :
+	* spawn : petite, calme, pas d'ennemis ou obstacles, peu de platforming
+	* shop : contient un marchant (différent types ? potions, buffs, armes)
+	* sortie : une porte vérouillée jusqu'à ce que le joueur ai vérifié la condition de sortie du donjon (?)
+	* boss fight : rare
+	* pièce "typique" : obstacles, plateformes, ennemis. Le type d'ennemi ou d'obstacle qui spawn à un endroit peut varier. Peut-être plusieurs vagues d'ennemis ? 
+
+Une pièce peut être reliée au nord, sud, est, ouest dépendamment du layout du donjon. 
+	
+
+# Progression dans un donjon
+La sortie est vérouillée jusqu'à ce que le joueur ait récupéré un certain nombre d'un objet (disons des fragments de clé). 
+En tuant un ennemi, joueur obtient xp & gold.
+Dans chaque salle qui contient des ennemis, si le joueur les tue tous, il obtient un fragment de clé. (??) 
+Ayant récupéré assez de fragments de clé, le joueur ouvre la porte et se bat contre un boss. (??)
+xp -> level up -> stats++ (-> choisir stat à booster ? skill tree ?)
+gold -> marchant -> armes/potions/buffs (?)
+Boss battu -> joueur peut choisir un buff permanent (double saut; dash; potions ont plus d'effet; ennemis ont moins de vie;...)
+
+
+
+# Une partie
+Menu principal -> "New Game"
+Création d'un objet qui contient la progression du jeu
+	* génération des donjons ?
+	* affichage d'une carte des donjons à parcourir
+Clic sur premier donjon -> afficher le donjon & minimap de pièces visitées
+(cf. # Progression dans un donjon)	
+Fin du premier donjon -> proposer un choix de buffs au joueur (ou du gold à dépenser chez le marchant)
+
+
+
+# Progression entre les parties
+Quand le joueur bat tous les donjons d'une partie à la difficulté maximale, il débloque une difficulté supérience pour les prochaines parties.
+La difficulté fait varier:
+	- les pv de base du joueur et des ennemis,
+	- les dégats infligés par le joueur et les ennemis
+	- le nombre de salles par donjon, et le nombre de fragments de clé à récupérer.
+	- la vitesse des projectiles
+	- ...
