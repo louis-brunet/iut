@@ -1,0 +1,15 @@
+### Schema BD - Quiz (projet PHP)
+
+
+Professeur (#loginProf: string, nom: string, prenom: string, password: string)
+
+Quiz (#idQuiz: int, loginProf: int, nom: string, status: string, duree: int, expiration: Date, clefPartage: string)
+
+Question (idQuiz: int, #idQuestion: int, texte: string, srcImg: string)
+
+Choix (idQuestion: int, #idChoix: int, texte: string, points: float)
+
+ReponseQuiz (#idQuiz:int, #clefEleve:int, nom: string, prenom: string)
+
+ReponseQuestion ( #idQuiz:int, #clefEleve: int, #idQuestion: int, idChoix: int )
+

@@ -1,0 +1,13 @@
+.question {
+	background-color: rgba(0,0,0,0.1);
+	margin-bottom: 20px;
+}
+
+.reponse {
+	background-color: rgba(0,0,0,0.2);
+	margin-bottom: 10px;
+}
+/*
+.reponses {
+	border: 1px solid black;
+}*/

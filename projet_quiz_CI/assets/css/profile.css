@@ -1,0 +1,20 @@
+table.liste-quiz thead th:nth-child(1) {
+	width: 29%;
+}
+
+table.liste-quiz thead th:nth-child(2) {
+	width: 16%;
+}
+
+table.liste-quiz thead th:nth-child(3) {
+	width:10%;
+}
+
+table.liste-quiz thead th:nth-child(4) {
+	width: 45%;
+	/*text-align: right;*/
+}
+
+table.liste-quiz tbody td:nth-child(4) {
+	text-align: center;
+}

@@ -1,0 +1,39 @@
+###Synopsis
+
+
+#Inscription professeur
+
+Un professeur non connecté arrive sur le site sur la page d'accueil il clique sur le bouton "S'inscrire".
+En cliquant sur ce bouton il est redirigé vers un formulaire d'inscription où il renseigne les champs de texte correspondant (son login, son mot de passe, son nom et prénom).
+
+
+#Authentification et création d'un quiz
+
+Un professeur connecté arrive sur sa page d'accueil, qui contient un bouton permettant de créer un nouveau quiz. En cliquant le professeur est redirigé vers une page de création d'un quiz.
+Le professeur remplit le formulaire de création, donnant à son quiz le nom "Mon quiz", une durée de 15 minutes, et une date d'expiration, le 15 juin 2020 à 17:00.
+Le quiz a pour status "En préparation"  et le professeur n'ajoute aucune question. En cliquant sur le bouton de validation, le professeur est redirigé vers sa page d'accueil qui affiche le nouveau quiz dans sa liste des quiz créés. 
+
+
+#Ajout de questions et mise en ligne du quiz
+
+A partir de sa page d'accueil, un professeur connecté clique sur le bouton qui lui propose de modifier son quiz nommé "Mon quiz", il est redirigé vers une page lui permettant de modifier toutes les informations entrées à la création du quiz.
+Un clic sur le bouton d'ajout d'une question affiche un champ de texte que le professeur remplit avec l'énoncé de la question.
+Le professeur rentre les différentes réponses possibles, ainsi que le nombre de points à associer à chaque réponse.
+Il ajoute une image pour illustrer certaines questions.
+Le professeur sélectionne le status "Actif" pour ce quiz. Il clique sur un bouton d'enregistrement des modifications et, il reçoit sa clé.
+
+Un professeur connecté arrive sur sa page d'accueil. Dans la liste de ses quiz créés, il clique sur un bouton proposant d'afficher la clef de partage d'un de ses quiz.
+Le professeur copie la clef associée à son quiz afin de la diffuser à ses élèves.
+
+
+#Accès des élèves au quiz et résultats
+
+Un élève arrive sur une page qui lui demande une clef de partage d'un quiz. Après avoir rentré la clef donnée par son professeur, le quiz actif lui est affiché.
+Etant informé de la durée impartie du quiz, l'élève clique sur le bouton pour démarrer le quiz. Il répond aux questions qui s'affichent avant la fin de la durée prévue, puis clique sur le bouton pour envoyer ses réponses.
+L'élève obtient une clef personnelle pour ce quiz.
+
+Le lendemain, l'élève retourne sur la page du quiz, où il est informé que ce quiz est expiré.
+Il entre sa clef personelle dans le champs de texte prévu pour, et est redirigé vers une page qui affiche la correction du quiz, ainsi que les réponses données par l'élève.
+
+
+

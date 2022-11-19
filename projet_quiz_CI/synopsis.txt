@@ -1,0 +1,25 @@
+### Synopsis 
+
+## PDV Prof
+# Inscription
+
+	Un professeur non connecté arrive sur une page contenant un bouton proposant de s'inscrire. En cliquant ce bouton, il est redirigé vers un formulaire d'inscription. Il rempli les champs de texte correspondant pour choisir un login et un mot de passe. Après avoir cliqué sur un bouton de validation, le professeur est connecté et redirigé vers sa page d'accueil.
+
+# Authentification et consultation d'un quiz créé.
+
+	Un professeur non connecté arrive sur une page permettant de s'authentifier par son login et son mot de passe. Après avoir rentré ses informations et cliqué sur le bouton de connexion, le professeur est redirigé vers sa page d'accueil, qui affiche une liste des noms de ses quiz créés. Le professeur clique sur un nom de quiz, l'amenant à une page qui affiche les statistiques des réponses à ce quiz. Après consultation, le professeur clique sur un bouton pour revenir à sa page d'accueil. 
+
+# Création d'un quiz vide
+
+	Un professeur connecté arrive sur sa page d'accueil, qui contient un bouton permettant de créer un nouveau quiz. En le cliquant, le professeur est redirigé vers une page de création d'un quiz. Le professeur remplit le formulaire de création, donnant à son quiz le nom "Mon quiz", une durée de 15 minutes, et une date d'expiration, le 15 juin 2020 à 17:00. Il selectionne le status "En préparation" et n'ajoute aucune question. En cliquant sur le bouton de validation, le professeur est redirigé vers sa page d'accueil, qui affiche le nouveau quiz dans sa liste des quiz créés.  
+
+# Modification et ajout de questions
+
+	A partir de sa page d'accueil, un professeur connecté clique sur le bouton qui lui propose de modifier son quiz nommé "Mon quiz", ce qui le redirige vers une page lui permettant de modifier toutes les informations entrées à la création du quiz. Un clic sur le bouton d'ajout d'une question affiche un champ de texte que le professeur remplit avec la question à afficher. Le professeur rentre les différentes réponses possibles, ainsi que le nombre de points à associer à chaque réponse. Le professeur sélectionne le status "Actif" pour ce quiz. Il clique sur un bouton d'enregistrement des modifications, qui lui affiche un dialogue confirmant la mise à jour du quiz. Le professeur est redirigé vers sa page d'accueil.
+
+# Partage d'un quiz
+	Un professeur connecté arrive sur sa page d'accueil. Dans la liste de ses quiz créés, il clique sur un bouton proposant d'afficher la clef de partage d'un de ses quiz. Le professeur copie la clef associée à son quiz afin de la diffuser à ses élèves. 
+
+## PDV Elève
+# Accès à un quiz
+	Un élève arrive sur une page qui lui demande une clef de partage d'un quiz. Après avoir rentré une clef donnée par son professeur, le quiz actif lui est affiché. Etant informé de la durée impartie à ce quiz, l'élève clique sur le bouton pour démarrer le quiz. Il répond aux questions qui s'affichent avant la fin de la durée prévue, puis clique sur le bouton pour envoyer ses réponses. L'élève obtient une clef personnelle pour ce quiz. Le lendemain, l'élève retourne sur la page du quiz, où il est informé que ce quiz est expiré. Il entre sa clef personelle dans le champs de texte prévu pour, et est redirigé vers une page qui affiche la correction du quiz, ainsi que les réponses données par l'élève. 
