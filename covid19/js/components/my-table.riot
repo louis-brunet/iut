@@ -1,0 +1,277 @@
+<my-table>
+	<!-- Formulaire de filtrage -->
+	<form onsubmit={ submit }>
+		<input 
+			type="text" 
+			placeholder={ props.columns[props.filterColumnIndex].name } 
+			value={ state.filterText }
+			oninput={ refresh } />
+
+		<select oninput={ refresh }>
+			<option each={ pageSize in props.pageSizes } value={ pageSize } selected={ pageSize === state.pageSize }>{ pageSize }</option>
+		</select>
+	</form>
+	
+	<!-- Résultats et numéros de pages -->
+	<div class='top'>
+		<div if={ state.totalRows } >
+			<div class="card row-count">{ state.totalRows } résultats</div>
+		</div>
+
+		<div if={ pageCount() > 1 } >
+			<div class="page-numbers card">
+				<div 
+				each={ pageNumber in seq(pageCount()) }
+				class="page-number { (pageNumber === state.pageNumber) ? 'current-page' : '' }"
+				onclick={ e => changePage(pageNumber) }>
+					{ pageNumber }
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Table -->
+	<table>
+		<thead>
+			<tr>
+				<th 
+				each={ col in props.columns } 
+				column={ col.weight } 
+				onclick={ e => changeSort(col.columnId) } 
+				column-id={ col.columnId }>
+					<div>{ col.name }</div>
+					<div if={ state.sortColumn === col.columnId } class="sort-{ state.sortOrder.toLowerCase() }"></div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr each={ row in state.rows }>
+				<td each={ cell in row } column={ getColumnWeight(cell.column) }>
+					<a if={ cell.link } href={ cell.link } class={ cell.class }>
+						{ cell.value }
+					</a>
+					<span if={ ! cell.link } class={ cell.class }>
+						{ cell.value }
+					</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<style>
+		input {
+			width: 120px;
+		}
+		table tbody, 
+		table thead{
+			display: block;
+		}
+		table tr {
+			display: flex;
+			flex-wrap: no-wrap;
+			border-bottom: 1px solid black;
+			width: 100%;
+		}
+		table th {
+			font-weight: bold;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			overflow-x: clip;
+			white-space: nowrap;
+		}
+		table {
+			width: 100%;
+		}
+		td, 
+		th {
+			display: block;
+			text-align: left;
+			flex-shrink: 1;
+		}
+		thead tr {
+			background: #bbb
+		}
+		tbody tr:nth-child(2n) {
+			background: #ddd;
+		}
+		
+		form {
+			margin: auto;
+		}
+
+		.sort-asc,
+		.sort-desc {
+			margin-left: 16px;
+		}
+
+		.sort-asc {
+			width: 0; 
+			height: 0; 
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+
+			border-bottom: 10px solid black;
+		}
+		.sort-desc {
+			width: 0; 
+			height: 0; 
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+
+			border-top: 10px solid black;
+		}
+
+		th:hover {
+			color: white;
+		}
+		th:hover .sort-desc{
+			border-top-color: white;
+		}
+		th:hover .sort-asc{
+			border-bottom-color: white;
+		}
+
+		.page-numbers {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+		}
+		.page-number {
+			flex-shrink: 1;
+			padding: 10px;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+		.page-number.current-page {
+			font-weight: bold;
+			cursor: default;
+		}
+		.page-number:hover:not(.current-page) {
+			background-color: #ddd;
+		}
+
+		.top {
+			display:flex;
+			justify-content: space-between;
+		}
+
+		.card.row-count {
+			padding: 16px;
+		}
+	</style>
+
+	<script>
+		export default {
+			pageCount() {
+				return Math.ceil(this.state.totalRows * 1.0 / this.state.pageSize) 
+			},
+			seq(n) {
+				if ( ! (n * 1) ) return []
+				let r = [];
+				for(let i=0; i<n; i++) r.push(i + 1);
+				return r;
+			},
+
+			getColumnWeight(id) {
+				for(column of this.props.columns) {
+					if (column.columnId === id) {
+						return column.weight
+					}
+				}
+
+				return 1
+			},
+			
+			refresh() {
+				let sortColumn = this.state.sortColumn
+				let sortOrder = this.state.sortOrder
+				let pageSize = this.$('select').value * 1
+				let pageNumber = this.state.pageNumber
+				let filterColumn = this.state.filterColumn
+				let filterText = this.$('input').value
+
+				if (pageSize !== this.state.pageSize) {
+					let start = (pageNumber - 1) * this.state.pageSize
+					pageNumber = Math.floor(start / pageSize) + 1
+				}
+				if (filterText !== this.state.filterText) {
+					pageNumber = 1
+				}
+
+				let queryRes = this.props.queryFunction(sortColumn, sortOrder, pageSize, pageNumber, filterColumn, filterText)
+
+				this.update({
+					sortColumn : sortColumn,
+					sortOrder : sortOrder,
+					pageSize : pageSize,
+					pageNumber : pageNumber,
+					filterColumn : filterColumn,
+					filterText : filterText,
+					rows : queryRes.rows,
+					totalRows : queryRes.totalRows
+				})
+
+				this.props.setLoading(false)
+			},
+
+			submit(e) {
+				e.preventDefault();
+				this.refresh();
+			},
+
+			changeSort(columnId) {
+				let oldSortOrder = this.state.sortOrder;
+
+				let newSortOrder;
+				if (this.state.sortColumn === columnId) {
+					newSortOrder = (this.state.sortOrder.toUpperCase() === 'ASC') ? 'DESC' : 'ASC';
+				} else {
+					this.state.pageNumber = 1;
+					newSortOrder = 'ASC';
+				}
+
+				this.state.sortColumn = columnId;
+				this.state.sortOrder = newSortOrder;
+
+				//let oldClassName = `.sort-${oldSortOrder.toLowerCase()}`;
+				//let newClassName = `.sort-${newSortOrder.toLowerCase()}`;
+				//this.$(oldClassName).classList.remove(oldClassName);
+				//this.$(`thead th[column-id="${columnId}"]`).classList.add(newClassName);
+
+				this.refresh();
+			},
+
+			changePage(pageNumber) {
+				if (pageNumber === this.state.pageNumber)
+					return
+				
+				//this.$('.page-number.current-page').classList.remove('current-page')
+				//this.$(`.page-numbers:nth-child(${ pageNumber })`).classList.add('current-page')
+				this.state.pageNumber = pageNumber
+				this.refresh()
+			}, 
+
+			onBeforeMount(props, state) {
+				console.log('MyTable.onBeforeMount() : props = ', props)
+				state.sortColumn = props.sortColumn
+				state.sortOrder = props.sortOrder
+				state.pageSize = props.pageSizes[props.defaultPageSizeIndex]
+				state.pageNumber = 1
+				state.filterColumn = props.columns[props.filterColumnIndex].columnId
+				state.filterText = '';
+				
+				state.totalColumnWeights = 0;
+				for(col of props.columns)
+					state.totalColumnWeights += col.weight;
+				//console.log('state.pageSize = ', state.pageSize)
+			},
+
+			onMounted(props, state) {
+
+				props.setLoading(true);
+				this.refresh();
+			}
+		}
+	</script>
+</my-table>

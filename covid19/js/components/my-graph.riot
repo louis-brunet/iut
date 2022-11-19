@@ -1,0 +1,461 @@
+<my-graph>
+	<div class="graph-container" >
+		<div class="graph-header">
+			<!-- TITRE -->
+			<div class="title">{ props.graphTitle }</div>
+
+			<!-- BOUTONS DE VISIBILITE DES COURBES -->
+			<div class="button-row">
+				<button 
+				each={ axis in props.yAxes }  
+				onclick={ () => toggleAxisVisibility(axis.id) } 
+				style="background-color: { state.axisVisibility[axis.id] ? axis.color : inactiveColor }"
+				disabled={ state.axisVisibility[axis.id] && (visibleAxisCount() === 1) }>
+					{ axis.name }
+				</button>
+			</div>
+		</div>
+		
+		<!-- CANVAS -->
+		<canvas></canvas>
+	</div>
+
+
+	<style>
+
+		/*:host * { 
+			outline: 1px solid magenta 
+		}*/
+
+		canvas {
+			/*flex-grow: 1;*/
+			width: 100%;
+			height: 500px;
+		}
+
+		.title {
+			font-size: 26px;
+			font-weight: 400;
+			line-height: 34px;
+			margin-top: 8px;
+			margin-bottom: 16px;
+			text-align: center;
+			flex-grow:1;
+		}
+
+		button {
+			color: white;
+		}
+
+		.graph-header {
+			display:flex;
+			justify-content: space-between;
+			padding: 4px;
+		}
+
+		.button-row {
+			display:flex;
+			justify-content: space-around;
+			align-items: center;
+		}
+
+		.button-row button {
+			margin-left: 16px;
+		}
+
+		div.graph-container {
+			padding: 16px;
+			margin-top: 64px;
+			margin-bottom: 24px;
+			border-top: 3px solid black;
+		}
+	</style>
+
+	<script>
+		export default {
+			inactiveColor: '#888',
+
+			onBeforeMount(props, state) {
+				state.axisVisibility = {}
+				for( const yAxis of props.yAxes ) {
+					state.axisVisibility[yAxis.id] = true 
+				}
+
+				if (props.graphType === 'differential') {
+					let yAxisIds = Array.from(props.yAxes, axis => axis.id)
+					//axisIds.push(props.xAxis.id)
+					state.values = this.cumulativeToDifferential(props.values, yAxisIds)
+				} else if (props.graphType === 'cumulative') {
+					state.values = props.values
+				}else throw  `graph type not recognized : ${props.graphType}`
+
+
+
+				//console.log('graph.onBeforeMount : \nprops = ',props,'\ncomputed axis stats', state.axisStats)
+			},
+
+			onMounted(props, state) {
+				console.log('MyGraph.onMounted() : \nprops = ', props, '\nstate = ', state)
+				window.addEventListener('resize', this.resized)
+
+				let canvas = this.$('canvas')
+				state.canvasWidth = canvas.offsetWidth
+				state.resized = true
+				this.computeDrawableBounds(canvas, state, props)
+				this.update()
+			},
+
+			onBeforeUpdate(props, state) {},
+
+			onUpdated(props, state) {
+
+
+
+				//this.$('.card').appendChild(document.createTextNode(' updated '))
+				let canvas = this.$('canvas')
+				this.computeAxisStats(props, state, canvas)
+
+				if (state.resized) {
+					this.computeDrawableBounds(canvas, state, props)
+					state.resized = false;
+				}
+
+				
+				this.computePositionData(props, state)
+
+				this.drawGraph(canvas, props, state)
+			},
+
+			// Redessine le graphe s'il a changé de taille
+			resized(evt) {
+				let canvas = this.$('canvas')
+				if (!this.state.canvasWidth || canvas.offsetWidth !== this.state.canvasWidth) {
+					this.update({
+						canvasWidth: canvas.offsetWidth,
+						resized: true
+					})
+				}
+			},
+
+			// Tranforme des données cumulatives en données différentielles 
+			cumulativeToDifferential(values, axisIds) {
+				//throw 'TODO - graph.cumulativeToDifferential'
+
+				let totals = {}
+				let res = []
+
+				for (const id of axisIds) {
+					totals[id] = 0
+				}
+
+				for(const value of values) {
+					let newValue = {}
+
+					for (const key in value) {
+						if (value.hasOwnProperty(key)) {
+							if (axisIds.includes(key)) {
+								newValue[key] = value[key] - totals[key]
+								totals[key] = value[key]
+							} else {
+								newValue[key] = value[key]
+							}
+						}
+					}
+
+					res.push(newValue)
+				}
+
+				return res;
+			},
+
+			// Calcule la zone dans laquelle dessiner la grille et les courbes
+			computeDrawableBounds(canvas, state, props) {
+				canvas.width = canvas.offsetWidth
+				canvas.height = canvas.offsetHeight
+				state.drawableWidth = canvas.width - (2 * props.axisPaddingHorizontal)
+				state.drawableHeight = canvas.height - (2 * props.axisPaddingVertical)
+			},
+
+			// Calcule des stats sur chaque axe
+			computeAxisStats(props, state, canvas) {
+				state.axisStats = {
+					x: { min : -1, max: -1 },// min, max
+					y: { min : -1, max: -1 } // min, max
+				}
+
+				for(const value of state.values) {
+					let x = value[props.xAxis.id]
+					if ( state.axisStats.x.min === -1 || state.axisStats.x.min > x)
+						state.axisStats.x.min = x
+					if ( state.axisStats.x.max === -1 || state.axisStats.x.max < x)
+						state.axisStats.x.max = x
+					
+					for (const yAxis of props.yAxes) {
+						if ( ! state.axisVisibility[yAxis.id]) continue
+
+						let y = value[yAxis.id]
+						if ( state.axisStats.y.min === -1 || state.axisStats.y.min > y)
+							state.axisStats.y.min = y
+						if ( state.axisStats.y.max === -1 || state.axisStats.y.max < y)
+							state.axisStats.y.max = y
+					}
+				}
+
+				let yMaxChars = state.axisStats.y.max.toString(10).split('')
+				//let yMajorStepChars = []
+				let yAxisMaxChars = []
+				for (let i = 0; i < yMaxChars.length; i++){
+					if (i === 0) {
+						//yMajorStepChars.push('1')
+						yAxisMaxChars.push('' + ((yMaxChars[0] * 1) + 1))
+					} else if (yMaxChars[i] != '.') {
+						//yMajorStepChars.push('0')
+						yAxisMaxChars.push('0')
+					} else break;
+				}
+				state.axisStats.y.axisMax = 1 * yAxisMaxChars.join('')
+
+				
+				state.axisStats.y.majorStep = 
+					props.yMajorLineCount ?
+					state.axisStats.y.axisMax / props.yMajorLineCount :
+					null; 
+				state.axisStats.y.minorStep = 
+					props.yMinorLineCount ?
+					state.axisStats.y.axisMax / props.yMinorLineCount :
+					null; 
+
+				state.axisStats.x.unitsToPixels = (u) => {
+					return (u-state.axisStats.x.min) * state.drawableWidth / (state.axisStats.x.max - state.axisStats.x.min)
+				}
+				state.axisStats.y.unitsToPixels = (u) => u * state.drawableHeight / state.axisStats.y.axisMax 
+
+				console.log(props.graphTitle + ' - axisStats : ', state.axisStats)
+			},
+			
+			// Calcule toutes les coordonnées nécessaires pour dessiner le graphe 
+			computePositionData(props, state) {
+				let top = props.axisPaddingVertical
+				let bottom = props.axisPaddingVertical + state.drawableHeight
+				let left = props.axisPaddingHorizontal
+				let right = props.axisPaddingHorizontal + state.drawableWidth
+
+				state.positions = { 
+					topLeft : { x: left, y: top },
+					topRight : { x: right, y: top },
+					bottomRight : { x: right, y: bottom },
+					bottomLeft : { x: left, y: bottom },
+					gridLines : {
+						major : [],
+						minor : []
+					}
+				}
+
+				this.computeGridLinePositions(top, bottom, left, right, props, state)
+				this.computeDataPositions(top, bottom, left, right, props, state)
+
+				console.log(`positions updated for graph ${props.graphTitle} : `, state.positions)
+			},
+
+			// Calcule les coordonnées où dessiner la grille du graphe
+			computeGridLinePositions(top, bottom, left, right, props, state) {
+				if (state.axisStats.y.majorStep) {
+					for (let y = 0; y <= state.axisStats.y.axisMax; y += state.axisStats.y.majorStep) {
+						let yPixels = top + (state.drawableHeight - state.axisStats.y.unitsToPixels(y))
+
+						state.positions.gridLines.major.push({
+							start: { x: left, y: yPixels},
+							end: { x: right, y: yPixels},
+							label: props.yValueToString ? props.yValueToString(y) :	 y,
+							orientation: 'y'
+						})
+					}
+				}
+
+				if (state.axisStats.y.minorStep) {
+					for (let y = 0; y <= state.axisStats.y.axisMax; y += state.axisStats.y.minorStep) {
+						let yPixels = top + (state.drawableHeight - state.axisStats.y.unitsToPixels(y))
+
+						state.positions.gridLines.minor.push({
+							start: { x: left, y: yPixels},
+							end: { x: right, y: yPixels}
+						})
+					}
+				}
+
+				for (let x = state.axisStats.x.min; x <= state.axisStats.x.max ; x += props.xAxis.majorStep) {
+					let xPixels = left + (state.axisStats.x.unitsToPixels(x))
+
+					state.positions.gridLines.major.push({
+						start: { x: xPixels, y: bottom},
+						end: { x: xPixels, y: top},
+						label: props.xAxis.valueToString ? props.xAxis.valueToString(x) : x,
+						orientation: 'x'
+					})
+				}
+
+				for (let x = state.axisStats.x.min; x <= state.axisStats.x.max ; x += props.xAxis.minorStep) {
+					let xPixels = left + (state.axisStats.x.unitsToPixels(x))
+
+					state.positions.gridLines.minor.push({
+						start: { x: xPixels, y: bottom},
+						end: { x: xPixels, y: top}
+					})
+				}
+			},
+
+			// Calcule les coordonnées des points des courbes à dessiner 
+			computeDataPositions(top, bottom, left, right, props, state) {
+				state.positions.values = {}
+				for (const yAxis of props.yAxes) {
+					if (state.axisVisibility[yAxis.id]) {
+						state.positions.values[yAxis.id] = []
+					}
+				}
+
+				for (const value of state.values) {
+					let xValue = value[props.xAxis.id];// TODO
+					for (const yAxis of props.yAxes) {
+						if (state.axisVisibility[yAxis.id]) {
+							let yValue = value[yAxis.id];//TODO
+							state.positions.values[yAxis.id].push({
+								x: left + state.axisStats.x.unitsToPixels(xValue),
+								y: top + (state.drawableHeight - state.axisStats.y.unitsToPixels(yValue))
+							});
+						}
+					}
+
+				}
+			},
+
+			// Redessine le graphe. Les coordonnées à utiliser doivent être calculées avant
+			// l'appel de cette fonction.
+			drawGraph(canvas, props, state) {
+				let context = canvas.getContext('2d')
+				context.font = props.labelFont
+				context.clearRect(0,0,canvas.width, canvas.height)
+				context.fillStyle = props.graphBackground
+				context.fillRect(0,0,canvas.width, canvas.height)
+				//console.log('Drawing graph \n'+this.props.graphTitle+'\non canvas :', canvas)
+
+				this.drawAxes(context, props, state)
+				this.drawData(context, props, state)
+			}, 
+
+			// Dessine les axes du graphe
+			drawAxes(context, props, state) {
+				// draw minor grid lines 
+				context.strokeStyle = props.minorLineColor
+				context.beginPath()
+				for (const minorLine of state.positions.gridLines.minor) {
+					context.moveTo(minorLine.start.x, minorLine.start.y)
+					context.lineTo(minorLine.end.x, minorLine.end.y)
+				}
+				context.stroke()
+				
+				// draw major grid lines & axis labels
+				context.strokeStyle = props.majorLineColor
+				context.lineWidth = 1
+				context.beginPath()
+				for (const majorLine of state.positions.gridLines.major) {
+					context.moveTo(majorLine.start.x, majorLine.start.y)
+					context.lineTo(majorLine.end.x, majorLine.end.y)
+
+					if (majorLine.orientation === 'x')
+						this.drawLabelX(context, majorLine.start.x, majorLine.start.y+8, majorLine.label, props.labelColor)
+					else if (majorLine.orientation === 'y')
+						this.drawLabelY(context, majorLine.start.x - 8, majorLine.start.y, majorLine.label, props.labelColor)
+				}
+				context.stroke()
+				
+				// draw axes 
+				context.strokeStyle = props.axisColor
+				context.lineWidth = 2
+				context.beginPath()
+				// x
+				context.moveTo(state.positions.bottomLeft.x, state.positions.bottomLeft.y)
+				context.lineTo(state.positions.bottomRight.x, state.positions.bottomRight.y)
+				// y
+				context.moveTo(state.positions.bottomLeft.x, state.positions.bottomLeft.y)
+				context.lineTo(state.positions.topLeft.x, state.positions.topLeft.y)
+				
+				context.stroke()
+			},
+
+			// Dessine les courbes 
+			drawData(context, props, state) {
+
+				for (const yAxis of props.yAxes) {
+					if (state.axisVisibility[yAxis.id]) {
+						let values = state.positions.values[yAxis.id]
+						context.strokeStyle = yAxis.color
+						context.lineWidth = 2
+						context.beginPath()
+						for( let i = 0; i < values.length ; i++) {
+							const value = values[i]
+							if (i === 0)
+								context.moveTo(value.x, value.y)
+							else 
+								context.lineTo(value.x, value.y)
+
+						}
+						context.stroke()
+					}
+				}
+
+			},
+
+			// Ecrit le texte donné comme étiquette de l'axe X aux coordonnées données
+			drawLabelX(context, x, y, text, color) {
+				context.save()
+				context.translate(x, y)
+				context.rotate(- Math.PI / 4.0 )
+
+				context.fillStyle = color
+				context.textAlign = 'right'
+				context.textBaseline = 'middle'
+				context.fillText(text, 0, 0)
+
+				context.restore()
+			},
+
+			// Ecrit le texte donné comme étiquette de l'axe Y aux coordonnées données
+			drawLabelY(context, x, y, text, color) {
+				context.fillStyle = color
+				context.textAlign = 'end'
+				context.textBaseline = 'middle'
+				context.fillText(text, x, y)
+			},
+
+			// Toggle la visibilité le la courbe correspondant à l'id donné
+			toggleAxisVisibility(id) {
+				let av = this.state.axisVisibility
+				av[id] = ! av[id];
+
+				this.update({
+					axisVisibility: av
+				})
+			},
+
+			// Renvoie le nombre de courbes visibles 
+			visibleAxisCount() {
+				let axisVisibility = this.state.axisVisibility
+				let count = 0
+
+				if (axisVisibility) {
+					for (const axisName in axisVisibility) {
+						if (Object.hasOwnProperty.call(axisVisibility, axisName)) {
+							const isVisible = axisVisibility[axisName];
+							
+							if (isVisible)
+								count++
+						}
+					}
+				}
+
+				return count;
+			}
+		}
+	</script>
+
+</my-graph>

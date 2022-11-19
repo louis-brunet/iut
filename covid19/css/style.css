@@ -1,0 +1,16 @@
+.confirmed {
+	color: blue;
+}
+.deaths {
+	color: red;
+}
+.recovered {
+	color: green;
+}
+
+
+.card {
+	background-color: #eee;
+	border-radius: 4px;
+	padding: 6px;
+}

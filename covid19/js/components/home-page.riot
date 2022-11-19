@@ -1,0 +1,47 @@
+<home-page>
+	<title-date title={ props.title }/>
+    <summary-panel { ...props.global }/>
+    <!--<button onclick={ toggleSpinner } >Toggle spinner</button>-->
+    <my-spinner />
+    <my-table set-loading={ setSpinnerVisible }  { ...props.tableData }/>
+    	<!-- set-loading={ setSpinnerVisible } 
+    	page-sizes= ...........
+    	default-page-size-index= ...........
+    	columns=...... // [{name: abc, weight: 1, class: 'confirmed'}]
+    	filter-column-index=....... // int
+    	data=....... // [ [{ value, link }, ...], ... ] />  -->
+
+	
+
+	<!-- <a href="{ props.basePath }country/FR">France</a> -->
+
+	<style>
+		.hidden {
+			display: none;
+		}
+	</style>
+
+	<script>
+		export default {
+
+			setSpinnerVisible( bool ){
+				let spinner = this.$('my-spinner');
+
+				if (bool) spinner.classList.remove('hidden')
+				else spinner.classList.add('hidden')
+
+			},
+			
+			toggleSpinner() {
+			 	this.$('my-spinner').classList.toggle('hidden')
+				//console.log('spinner toggled');
+			},
+
+			onMounted(props, state) {
+				// this.spinner = $('my-spinner')
+				//console.log('HomePage.onMounted() : props.tableData = ', props.tableData)
+				//this.toggleSpinner()
+			}
+		}
+	</script>
+</home-page>

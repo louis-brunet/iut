@@ -1,0 +1,51 @@
+<my-app>
+	<router base="#">
+		<div class="content">
+			<route path="{ state.homePath }">
+				<home-page 
+					title="Covid19" 
+					global={ props.global } 
+					base-path={ props.basePath } 
+					table-data={ props.tableData } />
+			</route>
+
+			<route path="{ props.basePath }#country/:code">
+				<country-page 
+					code={ route.params.code.toUpperCase() } 
+					base-path={ props.basePath } 
+					{ ...props.countryData}/>
+			</route>
+		</div>
+    </router>
+
+	<style>
+		.content {
+			width: 80%;
+			min-width: 1000px;
+			margin:auto;
+		}
+	</style>
+
+	<script>
+		export default {
+
+			components : {
+				router : route.Router,
+				route : route.Route
+			},
+
+			onBeforeMount(props, state) {
+				let lastIndex = props.basePath.length - 1
+
+				if (props.basePath.charAt(lastIndex) == '/') 
+					state.homePath = props.basePath.substring(0, lastIndex)
+				else 
+					state.homePath = props.basePath
+				
+				state.homePath += '(/?)(#?)'
+			},
+
+			onMounted(props, state) { }
+		}
+	</script>
+</my-app>

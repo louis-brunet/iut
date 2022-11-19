@@ -1,0 +1,15 @@
+<summary-panel>
+	<div class='row'>
+		<covid-summary title='Total' confirmed={ props.totalConfirmed } deaths={ props.totalDeaths } recovered={ props.totalRecovered }></covid-summary>
+		<covid-summary title="Aujourd'hui" confirmed={ props.newConfirmed } deaths={ props.newDeaths } recovered={ props.newRecovered }></covid-summary>
+	</div>
+
+	<style>
+		div.row {
+			display: flex;
+			flex-wrap: no-wrap;
+			justify-content: space-between;
+		}
+	</style>
+
+</summary-panel>
