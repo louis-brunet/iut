@@ -1,8 +1,8 @@
-# à remplacer par javac #
-JCC = '/mnt/d/Program Files/Java/jdk-13.0.1/bin/javac.exe'
+#JCC = '/mnt/d/Program Files/Java/jdk-13.0.1/bin/javac.exe'
+JCC = javac
 JFLAGS = -g -implicit:none
-# à remplacer par java #
-EXECUTE = '/mnt/d/Program Files/Java/jdk-13.0.1/bin/java.exe' 
+#EXECUTE = '/mnt/d/Program Files/Java/jdk-13.0.1/bin/java.exe' 
+EXECUTE = java
 
 ### BUT PAR DEFAUT ###
  
